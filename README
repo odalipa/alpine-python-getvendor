@@ -1,0 +1,120 @@
+
+
+
+    I have created a python program that will take a mac address as a parameter and lookup the vendor. I queried the https://macaddress.io/
+ MAC address lookup API.  I used the Requests Python Library to access the vendor information. You can use the python app on the command line.
+
+Usage for getvendor.py:
+python getvendor.py <mac address> 
+
+
+I built the docker image and uploaded it to dockerhub:
+
+I created the following files for Docker image creation:
+
+--- Dockerfile ------
+FROM python:alpine3.7
+COPY . /app
+WORKDIR /app
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+-----------------------------------
+
+-- requirements.txt --
+requests
+----------------------
+
+ # Build the Docker Image
+ docker build --tag getvendor .
+
+ # List the Docker Image
+ docker image ls 
+
+ # Login to the Container
+ docker run -it  getvendor  /bin/ash
+
+ # Run the Application
+ python getvendor.py <MAC Address>
+ 
+# Get CONTAINER ID
+ docker ps -a
+CONTAINER ID        IMAGE                           COMMAND                  CREATED             STATUS                     PORTS                    NAMES
+979ebd955fbe        getvendor                       "/bin/ash"               2 hours ago         Exited (127) 2 hours ago                            cocky_borg
+
+ # Create the image using the CONTAINER ID
+ docker commit -m "my getvendor.py program added to alpine image" -a "Mariano" 979ebd955fbe alpine-python-getvendor
+ alpine-python-getvendor                    latest              5e910f50a530        9 seconds ago       96.3MB
+
+# Create a tag of the Image
+docker tag alpine-python-getvendor odalipa/alpine-python-getvendor:latest
+
+# List the created Docker Image 
+docker image ls
+alpine-python-getvendor                    latest              150c524d14e9        2 minutes ago       96.3MB
+odalipa/alpine-python-getvendor            latest              150c524d14e9        2 minutes ago       96.3MB
+getvendor                                  latest              e7c2e10c4578        5 minutes ago       96.3MB
+
+
+# Push Image to a repository
+docker push odalipa/alpine-python-getvendor:latest
+
+REPOSITORY: odalipa / alpine-python-getvendor
+
+# To Push a New tag to the Dockerhub Repository:
+docker push odalipa/alpine-python-getvendor:tagname
+
+# To Pull the Docker Image from Docker Hub
+docker pull odalipa/alpine-python-getvendor:latest
+
+# To Run the Image in a Docker Container
+docker run -it odalipa/alpine-python-getvendor /bin/ash
+
+
+
+
+# Source Code for getvendor.py
+
+
+import requests
+import sys
+
+# API URL
+url = "https://api.macaddress.io/v1"
+# API Key
+apiKey = "at_nNvyTDHLOB91TF61rW7wLcDvLhq2z"
+# Desired output format
+output = "json"
+
+# if command line argument is not provoded
+if len(sys.argv) == 1:
+    # ask user for MAC
+    macaddr = input("Enter MAC address: ")
+else:
+    # else take first argument as MAC
+    macaddr = sys.argv[1]
+
+# Form the complete API Query
+# Example:
+# https://api.macaddress.io/v1?apiKey=at_nNvyTDHLOB91TF61rW7wLcDvLhq2z&output=json&search=c8:d9:d2:a9:f5:7f
+query = url + "?" + "apiKey=" + apiKey + "&" + "output=" + output + "&" + "search=" + macaddr
+
+# Try to make a API request
+try:
+    # Place request
+    result = requests.get(query)
+    # Collect data - data is returned as a python dictionary
+    data = result.json()
+    # If data has error in its key then print error
+    if 'error' in data:
+        print(data['error'])
+    # Else print relevant keys from data
+    else:
+        print("API Query:", query)
+        print("MAC Address:", macaddr)
+        print("OUI:", data['vendorDetails']['oui'])
+        print("Comapny Name:", data['vendorDetails']['companyName'])
+        print("Company Address:", data['vendorDetails']['companyAddress'])
+        print("Company Country Code:", data['vendorDetails']['countryCode'])
+# If try fails print error message to User
+except:
+    print('Requested API is not reachable: check your network connection and api query')
