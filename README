@@ -4,7 +4,14 @@
     I have created a python program that will take a mac address as a parameter and lookup the vendor. I queried the https://macaddress.io/
  MAC address lookup API.  I used the Requests Python Library to access the vendor information. You can use the python app on the command line.
 
-Usage for getvendor.py:
+
+# To Pull the Docker Image from Docker Hub
+docker pull odalipa/alpine-python-getvendor:latest
+
+# To Run the Image in a Docker Container
+docker run -it odalipa/alpine-python-getvendor /bin/ash
+
+# To execute the getvendor.py Python program
 python getvendor.py <mac address> 
 
 
