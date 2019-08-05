@@ -5,6 +5,8 @@
  MAC address lookup API.  I used the Requests Python Library to access the vendor information. You can use the python app on the command line.
 
 
+# Install Docker
+
 # To Pull the Docker Image from Docker Hub
 docker pull odalipa/alpine-python-getvendor:latest
 
