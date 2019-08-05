@@ -69,7 +69,22 @@ docker pull odalipa/alpine-python-getvendor:latest
 # To Run the Image in a Docker Container
 docker run -it odalipa/alpine-python-getvendor /bin/ash
 
+# GIT
 
+# Create a Repository on GITHUB 
+#https://github.com/odalipa/alpine-python-getvendor.git
+
+# Add Files in current directory
+git add .
+# Commit Files
+git commit -m "Python program getvendor.py to get the vendor from a MAC Address"
+# To remove the commit
+git reset --soft HEAD~1
+
+git remote add origin remote repository https://github.com/odalipa/alpine-python-getvendor.git
+git remote add origin https://github.com/odalipa/alpine-python-getvendor.git
+git remote -v
+git push -u origin master
 
 
 # Source Code for getvendor.py
